@@ -1,15 +1,16 @@
-FROM ubuntu:latest AS build
+# First stage: JDK with GraalVM
+FROM ghcr.io/graalvm/jdk:ol8-java17-22.3.3 AS build
 
-RUN apt-get update
-RUN apt-get install openjdk-17-jdk -y
 COPY . .
 
-RUN ./gradlew bootJar --no-daemon
+RUN ./gradlew nativeCompile
 
-FROM openjdk:17-jdk-slim
+FROM debian:bookworm-slim
 
-EXPOSE 8080
+WORKDIR /app
 
-COPY --from=build /build/libs/demo-flux-0.0.1-SNAPSHOT.jar app.jar
+# Copy the native binary from the build stage
+COPY --from=build build/native/nativeCompile/demo-flux /app/demo-flux
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the application
+CMD ["/app/demo-flux"]
