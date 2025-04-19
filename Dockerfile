@@ -1,6 +1,6 @@
 # Simple Dockerfile adding Maven and GraalVM Native Image compiler to the standard
 # https://github.com/graalvm/container/pkgs/container/graalvm-ce image
-FROM ghcr.io/graalvm/jdk:ol8-java17-22.3.3 AS build
+FROM ghcr.io/graalvm/graalvm-ce:ol7-java17-22.3.3 AS build
 
 ADD . /build
 WORKDIR /build
